@@ -3,7 +3,7 @@ import mediapipe as mp
 import numpy as np
 import time
 
-# ------------------ INIT ------------------
+
 mp_hands = mp.solutions.hands
 mp_draw = mp.solutions.drawing_utils
 mp_style = mp.solutions.drawing_styles
@@ -25,7 +25,7 @@ prev_x, prev_y = None, None
 def finger_up(lm, tip, pip):
     return lm[tip][1] < lm[pip][1]
 
-# ------------------ LOOP ------------------
+
 prev_time = 0
 
 while True:
@@ -35,7 +35,7 @@ while True:
 
     frame = cv2.flip(frame, 1)
 
-    # CREȘTE luminozitatea camerei
+  
     frame = cv2.convertScaleAbs(frame, alpha=1.3, beta=40)
 
     h, w, c = frame.shape
@@ -57,14 +57,14 @@ while True:
         index_up = finger_up(lm, 8, 6)
         middle_up = finger_up(lm, 12, 10)
 
-        # -------- DRAW --------
+       
         if index_up and not middle_up:
             drawing = True
             if prev_x is not None:
                 cv2.line(canvas, (prev_x, prev_y), (x, y), (0, 255, 0), 7)
             prev_x, prev_y = x, y
 
-        # -------- ERASE --------
+        
         elif index_up and middle_up:
             erasing = True
             cv2.circle(canvas, (x, y), 40, (0, 0, 0), -1)
@@ -72,7 +72,7 @@ while True:
         else:
             prev_x, prev_y = None, None
 
-        # Schelet mână (super clar)
+        
         mp_draw.draw_landmarks(
             frame,
             hand,
@@ -81,10 +81,10 @@ while True:
             mp_style.get_default_hand_connections_style()
         )
 
-    # Combinare frame + desen
+    
     combined = cv2.add(frame, canvas)
 
-    # FPS counter
+    
     cur = time.time()
     fps = int(1 / (cur - prev_time)) if prev_time != 0 else 0
     prev_time = cur
@@ -106,3 +106,4 @@ while True:
 
 cap.release()
 cv2.destroyAllWindows()
+
